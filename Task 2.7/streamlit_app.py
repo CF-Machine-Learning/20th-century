@@ -8,20 +8,13 @@ import plotly.graph_objects as go
 
 
 
-data = pd.read_csv('Random32MainData.csv')
+data = pd.read_csv("Random32MainData.csv")
 weather=pd.read_csv("weather data.csv")
 columns_to_drop = [7,8,9,11,13,15,17,19,21,23,25,27,29,31,32,33,34,35,36,37,38,39,40,41,43,44,45]
 weather = weather.drop(weather.columns[columns_to_drop], axis=1)
 
-top_10_stations =pd.read_csv("Top_10_stations.csv")
-
-
-
-
-
-
 # Define the pages for presenting findings
-pages = ['Introduction', 'Dual Axis Line Chart', 'Most Popular Station',"Kepler.gl Map","Misc",'Recommendation, Insights']  # You can add more pages as needed
+pages = ['Introduction', 'Dual Axis Line Chart', 'Most Popular Station',"Kepler.gl Map","Misc",'Recommendations, Insights']  # You can add more pages as needed
 
 # Create a sidebar to select pages
 selected_page = st.sidebar.selectbox('Select Page:', pages)
@@ -122,14 +115,21 @@ elif selected_page == 'Dual Axis Line Chart':
     # You can add different content specific to Dual Axis Line Chart here
     st.subheader("Dual axis Line Chart for Bike Trip and Temp")
 
-    markdown_text=''' In this analysis, we first randomly selected 32 records from all the months to create a representative sample. Using this sample, we counted the number of bike trips on a daily basis and plotted it in plot 1. Next, we gathered temperature data per day and created plot 2 to visualize the temperature trends.
+    markdown_text=''' Using this sample, we counted the number of bike trips on a daily basis and plotted it in plot 1. Next, we gathered temperature data per day and created plot 2 to visualize the temperature trends.
 
-Upon merging both plots, we presented a dual-axis line chart to compare bike trips and temperatures. However, due to the small sample size, the plot indicated that bike trips remained constant day-wise, and there was no apparent correlation between temperature and bike trips. However, we acknowledge that this conclusion may not reflect the true scenario since the analysis was conducted on a limited dataset. There might be fluctuations in bike trips that could be influenced by temperature in a larger dataset.
+Upon merging both plots, we presented a dual-axis line chart to compare bike trips and temperatures and observed that the line chart of bike trip counts over time shows that there is a consistent pattern in the number of bike trips. There are fluctuations in the daily bike trip counts, but overall, the number of bike trips remains relatively stable.
 
-To draw more accurate conclusions, we recommend conducting this analysis on a larger dataset that better represents the real-world scenarios and enables more reliable insights. '''
+The line chart of temperature variation over time indicates that there are seasonal changes in temperature. The temperature tends to be higher during the summer months and lower during the winter months.
+
+The consistent bike trip counts despite temperature variations could suggest that bike-sharing is popular year-round in the region, regardless of weather conditions. This finding might indicate that bike-sharing infrastructure is well-utilized and could potentially support tourism and recreational activities in the area.'''
     st.markdown(markdown_text)
 
 elif selected_page == 'Most Popular Station':
+    station_counts = data.groupby('start_station_name').size().reset_index(name='Trip Count')
+
+    station_counts_sorted = station_counts.sort_values(by='Trip Count', ascending=False)
+
+    top_10_stations = station_counts_sorted.head(10)
 
     fig = px.bar(
         top_10_stations,
@@ -189,7 +189,7 @@ elif selected_page == 'Misc':
 
     st.subheader("Pie chart for Rider Type")
 
-    markdown_text=''' This is an simple pie chart which we have tried to plot on Rider type category from the citi Bike trip data  and we finds that the  classic bike is compared to electric bike as the percentage is 68.8% for the classic bike and 31.3% for the electric bike
+    markdown_text=''' This is an simple pie chart which we have tried to plot on Rider type category from the citi Bike trip data  and we finds that the  classic bike is compared to electric bike and docked bike as the percentage is 73.3.8% for the classic bike,25.9% for the electric bike and 0.85% for docked bike
 
 we can also concludes from the above chart the preferences of customers for taking a ride in classic bike is more.'''
     st.markdown(markdown_text)
@@ -205,18 +205,20 @@ we can also concludes from the above chart the preferences of customers for taki
     st.markdown(markdown_text)
 
 
-elif selected_page == 'Recommendation, Insights':
+elif selected_page == 'Recommendations, Insights':
     markdown_text=''' We can mention some of the insights by performing analsysis on citi bike trip data  and Weather data from New york.
 
 1.  We identified the top 10 most popular stations, which are consistently attracting a high number of bike trips. These stations can be considered prime locations for bike-sharing services and may require more attention in terms of bike availability and maintenance.
 
-2. we noticed some fluctuations in bike trips corresponding to temperature changes.
+2. Line chart of bike trip counts over time shows that there is a consistent pattern in the number of bike trips. There are fluctuations in the daily bike trip counts, but overall, the number of bike trips remains relatively stable.
 
-3. We observed that bike trip counts vary across different months. There seems to be a seasonal pattern, with higher bike usage during certain months, which could be influenced by factors such as weather, tourist influx, or local events.
+3. The line chart of temperature variation over time indicates that there are seasonal changes in temperature. The temperature tends to be higher during the summer months and lower during the winter months.
 
-4. The analysis can help understand user preferences and behaviors, guiding marketing strategies and service improvements to cater to customer needs where we have seen that the choice of rider type for classic bike is more as compared to electric so we can take this under preferences and try to improve the availablity of classic bike based on their demand.
+4. We observed that bike trip counts vary across different months. There seems to be a seasonal pattern, with higher bike usage during certain months, which could be influenced by factors such as weather, tourist influx, or local events.
 
-5. We have seen from the number of bike trip the most popular stations that we have found states that these stations such as Central Avenue Road, Avenue Road etc which comes under the manhattan zone of new york and then we came to know that the most tourits places and recreational centres are mostly in these zone as comapred to other zones so the data offer insights into how tourism affects bike usage in specific areas.'''
+5. The analysis can help understand user preferences and behaviors, guiding marketing strategies and service improvements to cater to customer needs where we have seen that the choice of rider type for classic bike is more as compared to electric and docked bike so we can take this under preferences and try to improve the availablity of classic bike based on their demand.
+
+6. We have seen from the number of bike trip the most popular stations that we have found states that these stations such as Central Avenue Road, Avenue Road etc which comes under the manhattan zone of new york and then we came to know that the most tourits places and recreational centres are mostly in these zone as comapred to other zones so the data offer insights into how tourism affects bike usage in specific areas.'''
 
     st.markdown(markdown_text)
 
